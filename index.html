@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      table {
+        width: 80%;
+        margin: 30px auto;
+      }
+      td,
+      th {
+        border: 1px solid black;
+      }
+    </style>
+  </head>
+  <body>
+    <nav>
+        <a href="./input.html">Create page</a>
+    </nav>
+    <table>
+      <thead>
+        <tr>
+          <th>id</th>
+          <th>ShipNAme</th>
+          <th>Country</th>
+          <th>Delete option</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+
+    <script>
+      let tbody = document.querySelector("tbody");
+
+      fetch("https://northwind.vercel.app/api/orders")
+        .then((res) => res.json())
+        .then((data) => {
+          data.forEach((element) => {
+            createTableItem(element);
+          });
+        });
+
+      function createTableItem(item) {
+        let tr = document.createElement("tr");
+        let td1 = document.createElement("td");
+        td1.innerHTML = item?.id;
+        let td2 = document.createElement("td");
+        td2.innerHTML = item?.shipName;
+        let td3 = document.createElement("td");
+        td3.innerHTML = item?.shipAddress.country;
+        let td4 = document.createElement("td");
+        let button = document.createElement("button");
+        button.innerHTML = "X";
+        button.onclick = ()=>{
+            deleteFromOrdersApi(item?.id)
+            tr.remove()
+
+        }
+        
+        td4.appendChild(button);
+        tr.append(td1, td2, td3, td4);
+        tbody.appendChild(tr);
+      }
+
+      function deleteFromOrdersApi(id) {
+        fetch(`https://northwind.vercel.app/api/orders/${id}`,{
+            method:"delete"
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            data.forEach((element) => {
+              createTableItem(element);
+            });
+          });
+      }
+    </script>
+  </body>
+</html>
